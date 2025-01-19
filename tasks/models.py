@@ -4,21 +4,42 @@ class Employee(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
 
+    def __str__(self):
+        return self.name #Dunder Method
+
 class Project(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
     start_date = models.DateField()
+
+    def __str__(self):
+        return self.name
 
 # Create your models here.
 class Task(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, default=1) 
+    STATUS_CHOICES=[
+        ('PENDING','Pending'),
+        ('IN_PROGRESS','In Progress'),
+        ('COMPLETED','Completed')
+    ]
+
+    project = models.ForeignKey(
+        'Project', 
+        on_delete=models.CASCADE,
+        default=1
+        ) 
 
     assigned_to = models.ManyToManyField(Employee)
     title = models.CharField(max_length=250)
     description = models.TextField()
     due_date = models.DateField()
-    is_completed = models.BooleanField(default=False)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='PENDING')
+    is_completed = models.BooleanField(default=False) 
     created_task = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
 
 
 class TaskDetails(models.Model):
@@ -31,8 +52,17 @@ class TaskDetails(models.Model):
         (MEDIUM , 'Medium'),
         (LOW , 'Low')
     )
-    task = models.OneToOneField(Task, on_delete=models.CASCADE)
+
+    task = models.OneToOneField(
+        Task, on_delete=models.CASCADE
+        )
     assigned_to = models.CharField(max_length=100)
-    priority = models.CharField(max_length=1, choices=PRIORITY_OPTIONS, default = LOW) 
+    priority = models.CharField(
+        max_length=1, choices=PRIORITY_OPTIONS, default = LOW
+        ) 
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Details for Task {self.task.title}"
 
 

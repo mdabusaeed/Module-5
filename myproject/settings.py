@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,10 +40,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tasks',
     'users',
+    'debug_toolbar'
 
 ]
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,13 +98,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'task-management',
-        'USER': 'postgres',  # Ensure this matches the actual PostgreSQL user
-        'PASSWORD': '1234',  # Ensure this matches the correct password
-        'HOST': 'localhost',  # Ensure the correct host
-        'PORT': '5432',  # Ensure the correct port
+        'NAME': 'task_management',
+        'USER': 'postgres',  
+        'PASSWORD': '1234',  
+        'HOST': 'localhost',  
+        'PORT': '5432',  
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
