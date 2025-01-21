@@ -8,7 +8,12 @@
 <body>
     <ul>
         <div>
-            {{tasks}}
+            {% for task in tasks %}
+                <li>
+                    <p>{{task.title}}</p>
+                    <span>{{task.status}}</span>
+                </li>
+            {% endfor %}
         </div>
     </ul>
 </body>
