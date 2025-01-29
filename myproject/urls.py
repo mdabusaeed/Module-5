@@ -15,6 +15,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tasks/', include("tasks.urls")),
-    path('__debug__/', include('debug_toolbar.urls')),  # Correct way to include debug toolbar URLs
+    path('__debug__/', include('debug_toolbar.urls')),  
+    path('users/', include("users.urls")),
+    
 ]
 

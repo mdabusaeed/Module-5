@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-800 min-h-screen flex items-center justify-center">
+
+    <!-- Main container -->
+    <div class="bg-gray-300 text-black shadow-lg rounded-lg p-8 max-w-2xl w-full">
+        <!-- Header -->
+        <h1 class="text-3xl font-bold text-center text-black mb-6">
+            Welcome to Authentication System
+        </h1>
+
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" placeholder="Enter Your Username" name = 'username' class="block w-full px-4 py-2 border rounded-lg mb-2">
+                <input type="password" placeholder="Enter Your Password" name = 'password' class="block w-full px-4 py-2 border rounded-lg mb-4">
+                
+                <button type="submit" class="w-full bg-gray-700 text-gray-200 font-medium py-2 rounded-lg hover:bg-gray-600 transition duration-300">
+                    Sign In
+                </button>
+            </form>
+        </div>
+
+        <!-- Admin credentials displayed below -->
+        <div class="mt-6 text-center text-sm">
+            <p class="text-gray-700">Admin Username: <strong>{{ admin_username }}</strong></p>
+            <p class="text-gray-600">Use the correct password for login.</p>
+        </div>
+    </div>
+
+</body>
+</html>

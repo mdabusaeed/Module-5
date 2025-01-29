@@ -33,13 +33,14 @@ class Task(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
     due_date = models.DateField()
-    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='PENDING')
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='PENDING')
     is_completed = models.BooleanField(default=False) 
     created_task = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+    
 
 
 class TaskDetails(models.Model):
@@ -54,9 +55,10 @@ class TaskDetails(models.Model):
     )
 
     task = models.OneToOneField(
-        Task, on_delete=models.CASCADE
+        Task, on_delete=models.CASCADE,
+        related_name='details',
         )
-    assigned_to = models.CharField(max_length=100)
+    # assigned_to = models.CharField(max_length=100)
     priority = models.CharField(
         max_length=1, choices=PRIORITY_OPTIONS, default = LOW
         ) 
@@ -64,5 +66,7 @@ class TaskDetails(models.Model):
 
     def __str__(self):
         return f"Details for Task {self.task.title}"
+
+
 
 

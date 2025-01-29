@@ -40,12 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tasks',
     'users',
+    'core',
     'debug_toolbar'
 
 ]
 
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
     # ...
 ]
@@ -66,7 +66,10 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'core', 'templates'),  # ✅ Add this
+            os.path.join(BASE_DIR, 'templates'),  # ✅ Optional: include global templates
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -98,7 +101,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'task_management',
+        'NAME': 'task-management', 
         'USER': 'postgres',  
         'PASSWORD': '1234',  
         'HOST': 'localhost',  
