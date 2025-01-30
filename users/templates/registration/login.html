@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,31 +8,44 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
-<body class="bg-gray-800 min-h-screen flex items-center justify-center">
+<body class="bg-gradient-to-br from-gray-400 via-gray-400 to-gray-400 min-h-screen flex items-center justify-center">
 
     <!-- Main container -->
-    <div class="bg-gray-300 text-black shadow-lg rounded-lg p-8 max-w-2xl w-full">
+    <div class="bg-white text-black shadow-xl rounded-2xl p-10 max-w-lg w-full border border-gray-300">
+        
         <!-- Header -->
-        <h1 class="text-3xl font-bold text-center text-black mb-6">
-            Welcome to Authentication System
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8">
+            Welcome Back! 
         </h1>
 
-        <div>
-            <form method="POST">
-                {% csrf_token %}
-                <input type="text" placeholder="Enter Your Username" name = 'username' class="block w-full px-4 py-2 border rounded-lg mb-2">
-                <input type="password" placeholder="Enter Your Password" name = 'password' class="block w-full px-4 py-2 border rounded-lg mb-4">
-                
-                <button type="submit" class="w-full bg-gray-700 text-gray-200 font-medium py-2 rounded-lg hover:bg-gray-600 transition duration-300">
-                    Sign In
-                </button>
-            </form>
-        </div>
+        <!-- Display messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="px-4 py-2 text-white font-medium rounded-md 
+                        {% if message.tags == 'success' %} bg-green-500 
+                        {% elif message.tags == 'error' %} bg-red-500 
+                        {% else %} bg-yellow-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Login Form -->
+        <form method="POST">
+            {% csrf_token %}  <!-- ✅ CSRF Token must be inside the form -->
+            {{ form.as_p }}
+            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-indigo-500 transition duration-300">
+                Sign In
+            </button>
+        </form>
+        
 
         <!-- Admin credentials displayed below -->
-        <div class="mt-6 text-center text-sm">
-            <p class="text-gray-700">Admin Username: <strong>{{ admin_username }}</strong></p>
-            <p class="text-gray-600">Use the correct password for login.</p>
+        <div class="mt-8 text-center text-sm text-gray-600">
+            <p>Admin Username: <strong class="text-gray-900">{{ admin_username }}</strong></p>
+            <p>Use the correct password for login.</p>
         </div>
     </div>
 

@@ -74,30 +74,3 @@ class TaskDetails(models.Model):
 
 
 # Notify the user when a new task is created
-@receiver(m2m_changed, sender=Task.assigned_to.through)
-def notify_employees_task_creation(sender, instance, action, **kwargs):
-    print(f"🔥 Signal Triggered! Action: {action}")  # Debugging output
-
-    if action == "post_add":
-        assigned_employees = [emp.email for emp in instance.assigned_to.all() if emp.email]
-
-        print(f"📨 Assigned Employees: {assigned_employees}")  # Debugging output
-
-        if assigned_employees:
-            print("🚀 Sending Email...")
-            send_mail(
-                "New Task Created",
-                f"A new task '{instance.title}' has been created and assigned to you.",
-                "abu.saeed.nicl@gmail.com",
-                assigned_employees,
-                fail_silently=False,  # Ensure errors are not ignored
-            )
-            print("✅ Email Sent!")
-
-
-
-@receiver(post_delete, sender=Task)
-def employees_task_deletion(sender, instance, **kwargs):
-    if instance.details:
-        instance.details.delete()
-        print("🗑 Task Details Deleted!")

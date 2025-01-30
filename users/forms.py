@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 import re
 from tasks.forms import StyleForMixin
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class CustomUserCreationForm(StyleForMixin,forms.ModelForm):
@@ -40,20 +41,23 @@ class CustomUserCreationForm(StyleForMixin,forms.ModelForm):
 
         return password2
     
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        allowed_domains = ['gmail.com','hotmail.com','outlook.com','yahoo.com','aol.com']
+    # def clean_email(self):
+    #     email = self.cleaned_data.get('email')
+    #     allowed_domains = ['gmail.com','hotmail.com','outlook.com','yahoo.com','aol.com','bltiwd.com']
 
-        email_domain = email.split('@')[-1]
+    #     email_domain = email.split('@')[-1]
 
-        if email_domain not in allowed_domains:
-            raise forms.ValidationError('Please use a valid email address.')
+    #     if email_domain not in allowed_domains:
+    #         raise forms.ValidationError('Please use a valid email address.')
         
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('Email already in use.')
+    #     if User.objects.filter(email=email).exists():
+    #         raise forms.ValidationError('Email already in use.')
         
-        return email
+    #     return email
     
+class LoginForm(StyleForMixin, AuthenticationForm):
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     
 

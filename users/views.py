@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from users.forms import CustomUserCreationForm
@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from users.forms import LoginForm
+from django.contrib.auth.tokens import default_token_generator 
 
 
 def sign_up(request):
@@ -13,28 +16,28 @@ def sign_up(request):
         print("Received CSRF Token:", request.POST.get('csrfmiddlewaretoken'))
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            messages.success(request, "Your account has been created successfully! You can now log in.")
-            return redirect('login')
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data.get('password1'))
+            user.is_active = False
+            user.save()
+            messages.success(request, "Please check your email to activate your account.") 
+            return redirect('sign-in')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
 
 def sign_in(request):
+    form = LoginForm()
     if request.method == 'POST':
-        username = request.POST.get('username')  
-        password = request.POST.get('password')  
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            messages.success(request, "You have successfully logged in.")
-            return redirect('home')  
-        else:
-            messages.error(request, "Invalid username or password.")
-    
-    return render(request, 'registration/login.html')  
+            return redirect('home')
+
+    return render(request, 'registration/login.html', {'form': form})  
+
 
 def sign_out(request):
     if request.method == 'POST':
@@ -42,5 +45,20 @@ def sign_out(request):
         return redirect('sign-in')
     
 
+def activate_user(request, user_id, token):
+    try:
+        user = User.objects.get(id=user_id)
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return redirect('sign-in')
+        else:
+            return HttpResponse("Invalid Token")
+        
+    except User.DoesNotExist:
+        return HttpResponse ("User Not Found")
+
+    
 
 
+ 

@@ -32,6 +32,20 @@
             </script>
         {% endif %}
 
+        <!-- Display Error Message -->
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+
+            <script>
+                setTimeout(function() {
+                    document.getElementById('error-message').style.display = 'none';
+                }, 5000);
+            </script>
+        {% endif %}
+
             <!-- Registration Form -->
             <div id="signup-form">
                 <form method="post" class="space-y-4">
