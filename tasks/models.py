@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save, m2m_changed, post_delete
+from django.dispatch import receiver
+from django.core.mail import send_mail
 
 class Employee(models.Model):
     name = models.CharField(max_length=100)
@@ -55,7 +58,9 @@ class TaskDetails(models.Model):
     )
 
     task = models.OneToOneField(
-        Task, on_delete=models.CASCADE,
+        Task, 
+        # on_delete=models.CASCADE,
+        on_delete=models.DO_NOTHING,
         related_name='details',
         )
     # assigned_to = models.CharField(max_length=100)
@@ -68,5 +73,31 @@ class TaskDetails(models.Model):
         return f"Details for Task {self.task.title}"
 
 
+# Notify the user when a new task is created
+@receiver(m2m_changed, sender=Task.assigned_to.through)
+def notify_employees_task_creation(sender, instance, action, **kwargs):
+    print(f"🔥 Signal Triggered! Action: {action}")  # Debugging output
+
+    if action == "post_add":
+        assigned_employees = [emp.email for emp in instance.assigned_to.all() if emp.email]
+
+        print(f"📨 Assigned Employees: {assigned_employees}")  # Debugging output
+
+        if assigned_employees:
+            print("🚀 Sending Email...")
+            send_mail(
+                "New Task Created",
+                f"A new task '{instance.title}' has been created and assigned to you.",
+                "abu.saeed.nicl@gmail.com",
+                assigned_employees,
+                fail_silently=False,  # Ensure errors are not ignored
+            )
+            print("✅ Email Sent!")
 
 
+
+@receiver(post_delete, sender=Task)
+def employees_task_deletion(sender, instance, **kwargs):
+    if instance.details:
+        instance.details.delete()
+        print("🗑 Task Details Deleted!")
