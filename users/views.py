@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from users.forms import LoginForm
+from users.forms import LoginForm, AssignRollFrom
 from django.contrib.auth.tokens import default_token_generator 
 
 
@@ -57,8 +57,24 @@ def activate_user(request, user_id, token):
         
     except User.DoesNotExist:
         return HttpResponse ("User Not Found")
-
     
+def admin_dashboard(request):
+    users = User.objects.all()
+    return render(request, 'admin/dashboard.html', {'users': users})
 
+def assign_role(request, user_id):
+    user = User.objects.get(id=user_id)
+    form = AssignRollFrom()
+
+    if request.method == 'POST':
+        form = AssignRollFrom(request.POST)
+        if form.is_valid():
+            role = form.cleaned_data.get('role')
+            user.groups.clear()
+            user.groups.add(role)
+            messages.success(request, f"Role {user.username} has been assigned to the {role.name} role")
+            return redirect('admin-dashboard')
+        
+    return render(request, 'admin/assign-role.html', {'form': form, 'user': user})  
 
  
