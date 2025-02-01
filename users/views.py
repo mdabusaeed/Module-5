@@ -1,13 +1,13 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from users.forms import CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from users.forms import LoginForm, AssignRollFrom
+from users.forms import LoginForm, AssignRollFrom, CreateGroupForm
 from django.contrib.auth.tokens import default_token_generator 
 
 
@@ -72,9 +72,23 @@ def assign_role(request, user_id):
             role = form.cleaned_data.get('role')
             user.groups.clear()
             user.groups.add(role)
-            messages.success(request, f"Role {user.username} has been assigned to the {role.name} role")
-            return redirect('admin-dashboard')
+            messages.success(request, f"{user.username} has been assigned to the {role.name} role")
+            return redirect('assign-role', user_id=user.id)
         
     return render(request, 'admin/assign-role.html', {'form': form, 'user': user})  
 
  
+def create_group(request):
+    form = CreateGroupForm()
+    if request.method == 'POST':
+        form = CreateGroupForm(request.POST)
+        if form.is_valid():
+            group = form.save()
+            messages.success(request, f"{group.name} has been created.")
+            return redirect('create-group')
+        
+    return render(request, 'admin/create-group.html', {'form': form})
+
+def group_list(request):
+    groups = Group.objects.all()
+    return render(request, 'admin/group-list.html', {'groups': groups})
