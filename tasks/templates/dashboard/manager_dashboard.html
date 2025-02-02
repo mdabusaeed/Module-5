@@ -20,7 +20,10 @@
             <div class="grid grid-cols-4 gap-4 p-4 items-center">
               <div class="flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                <span>{{task.title}}</span>
+
+                <a href="{% url 'task-detail' task.id %}">{{ task.title }}</a>
+
+
                 <a href='{% url "update-task" task.id %}' class='px-2 py-1 bg-purple-500 rounded-full '>Edit</a>
                 <form action='{% url "delete-task" task.id %}' method='POST'>
                   {% csrf_token %}

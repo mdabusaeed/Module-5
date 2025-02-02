@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test,permi
 # Create your views here.
 
 def is_manager(user):
-    return user.groups.filter(name='MANAGER').exists()
+    return user.groups.filter(name__iexact='Manager').exists()
 def is_employee(user):
     return user.groups.filter(name='EMPLOYEE').exists()
 
@@ -17,11 +17,6 @@ def is_employee(user):
 def manager_dashboard(request):
     type = request.GET.get('type','all')
     
-    # Getting Task Count
-    # total_task = tasks.count()
-    # completed_task = tasks.filter(status='COMPLETED').count()
-    # in_progress_task = tasks.filter(status='IN_PROGRESS').count()
-    # pending_task = tasks.filter(status='PENDING').count()
     counts = Task.objects.aggregate(
         total = Count('id'),
         completed = Count('id', filter=Q(status='COMPLETED')), 
@@ -114,23 +109,19 @@ def delete_task(request, id):
         messages.error(request, "Task Not Deleted")
         return redirect('manager-dashboard')
 
+
 @login_required
 @permission_required('tasks.view_task', login_url='no-permission')
 def view_task(request):
-    ''' Show The Task That Are Completed ''' 
-    # tasks = Task.objects.filter(status='PENDING')
+    projects = Project.objects.annotate(
+        num_tasks = Count('task')).order_by('num_tasks')
+    return render(request, "show_task.html", {"projects": projects})
 
-    ''' Show the task that due date today'''
-    # tasks = Task.objects.filter(status = date.today())
 
-    '''Show the high prioriity'''
-    tasks = TaskDetails.objects.exclude(priority = 'L')
+@login_required
+@permission_required('tasks.view_task', login_url='no-permission')
+def task_details(request, task_id):
+    task = Task.objects.get(id=task_id)
+    return render(request, "task-detail.html", {"task": task})
 
-    ''' Show the task that contain word paper '''
-    # tasks = Task.objects.filter(title__icontains = "paper")
-
-    ''' Select Related Quiries'''
-    
-
-    # return render(request,"show_task.html",{'tasks':tasks})
  
