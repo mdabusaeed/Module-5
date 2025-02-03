@@ -6,6 +6,7 @@ from datetime import date
 from django.db.models import Q, Count, Sum, Avg, Max, Min
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test,permission_required
+from users.views import is_admin
 # Create your views here.
 
 def is_manager(user):
@@ -36,7 +37,8 @@ def manager_dashboard(request):
 
     context = {
         'tasks': tasks,
-        'counts':counts
+        'counts':counts,
+        'role': 'Manager'
     }
 
     return render(request, "dashboard/manager_dashboard.html",context)
@@ -52,9 +54,10 @@ def create_task(request):
     # employee = Employee.objects.all()
     task_form = TaskModelForm()
     task_detail_form = TaskDetailModelForm()
+
     if request.method == 'POST':
         task_form = TaskModelForm(request.POST)
-        task_detail_form = TaskDetailModelForm(request.POST)
+        task_detail_form = TaskDetailModelForm(request.POST, request.FILES)
         if task_form.is_valid() and task_detail_form.is_valid():
 
             ''' For Model Form Data '''
@@ -122,6 +125,26 @@ def view_task(request):
 @permission_required('tasks.view_task', login_url='no-permission')
 def task_details(request, task_id):
     task = Task.objects.get(id=task_id)
-    return render(request, "task-detail.html", {"task": task})
+    status_choices = Task.STATUS_CHOICES
+
+    if request.method == 'POST':
+        selected_status = request.POST.get('task_status')
+        task.status = selected_status
+        task.save()
+        return redirect('task-detail', task.id)
+
+    return render(request, "task-detail.html", {"task": task ,"status_choices": status_choices})
+
+    
+@login_required
+def dashboard(request):
+    if is_manager(request.user):
+        return redirect('manager-dashboard')
+    elif is_employee(request.user):
+        return redirect('employee-dashboard')
+    elif is_admin(request.user):
+        return redirect('admin-dashboard')
+    
+    return redirect('no-permission')
 
  

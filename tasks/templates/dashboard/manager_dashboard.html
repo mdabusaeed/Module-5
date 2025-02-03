@@ -32,14 +32,14 @@
               </div>
               <div>
                 <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm"
-                >{{task.details.get_priority_display}}</span
+                >{{task.details.get_priority_display}} </span
                 >
               </div>
               <div class="flex -space-x-2">
                 <div class="flex -space-x-2">
                   {% for member in task.assigned_to.all %}
                   <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm border-2 border-white">
-                    {{member.name|slice:':2'}}
+                    {{member.first_name|slice:':1'}}
                   </div>
                   {% endfor %}
                 
