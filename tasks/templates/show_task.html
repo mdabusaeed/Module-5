@@ -6,15 +6,16 @@
     <title>View Tasks</title>
 </head>
 <body>
+    <h2>Projects and Tasks</h2>
     <ul>
-        <div>
-            {% for task in tasks %}
-                <li>
-                    <p>{{task.title}}</p>
-                    <span>{{task.status}}</span>
-                </li>
-            {% endfor %}
-        </div>
+      {% for project in projects %}
+        <li>
+          <strong>{{ project.name }}</strong> - {{ project.num_tasks }} tasks
+        </li>
+      {% empty %}
+        <li>No projects available.</li>
+      {% endfor %}
     </ul>
+    
 </body>
 </html>

@@ -101,6 +101,7 @@ def assign_role(request, user_id):
 @user_passes_test(is_admin, login_url='no-permission')
 def create_group(request):
     form = CreateGroupForm()
+    
     if request.method == 'POST':
         form = CreateGroupForm(request.POST)
         if form.is_valid():
