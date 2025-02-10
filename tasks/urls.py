@@ -2,6 +2,7 @@ from django.urls import path
 from tasks.views import manager_dashboard, employee_dashboard, create_task, view_task,update_task,delete_task,task_detail,dashboard, Grettings, CreateTask,UpdateView, ViewProject
 from core.views import no_permission
 
+
 urlpatterns = [
     path('manager-dashboard/', manager_dashboard,name = 'manager-dashboard'),
     path('employee-dashboard/', employee_dashboard,name = 'employee-dashboard'),
