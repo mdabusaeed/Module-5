@@ -1,8 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save, m2m_changed, post_delete
-from django.dispatch import receiver
-from django.core.mail import send_mail
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Project(models.Model):
@@ -26,7 +23,7 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         default=1
         ) 
-    assigned_to = models.ManyToManyField(User, related_name='tasks')
+    assigned_to = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tasks')
     title = models.CharField(max_length=250)
     description = models.TextField()
     due_date = models.DateField()
@@ -64,6 +61,5 @@ class TaskDetails(models.Model):
 
     def __str__(self):
         return f"Details for Task {self.task.title}"
-
-
+    
 
