@@ -75,40 +75,6 @@ class PasswordResetFormView(StyleForMixin, PasswordResetForm):
 class SetPasswordForm(StyleForMixin, SetPasswordForm):
     pass
 
-
-'''
-class EditProfileForm(StyleForMixin,forms.ModelForm):
-    class Meta:
-        model = User
-        fields  = ['email', 'first_name', 'last_name']
-
-    bio = forms.CharField(required=False, widget=forms.Textarea, label='Bio')
-    profileImage = forms.ImageField(required=False, label='Profile Image')
-
-    def __init__(self, *args, **kwargs):
-        self.userprofile = kwargs.pop('userprofile', None)
-        super().__init__(*args, **kwargs)
-
-        if self.userprofile:
-            self.fields['bio'].initial = self.userprofile.bio
-            self.fields['profileImage'].initial = self.userprofile.profileImage
-
-    def save(self, commit = True):
-        user = super().save(commit=False)
-
-        if self.userprofile:
-            self.userprofile.bio = self.cleaned_data.get('bio')
-            self.userprofile.profileImage = self.cleaned_data.get('profileImage')
-
-            if commit:
-                self.userprofile.save()
-
-        if commit:
-            user.save()
-
-        return user
-'''
-
 class EditProfileForm(StyleForMixin,forms.ModelForm):
     class Meta:
         model = CustomUser
